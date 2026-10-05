@@ -174,6 +174,140 @@ class Tree {
       return this._cercaValore(value, nodoCorrente.right, nodoCorrente);
     }
   }
+
+  levelOrderForEach(callback) {
+    if (typeof callback !== "function") { /*verifichiamo che il paramentro callback sia una funzione */
+      throw new Error ("Il parametro non è una funzione")
+    }
+    if (this.root === null) { /*verifichiamo che il tree non sia vuoto */
+      return;
+    }
+    this._scorriLivelliRicorsione(callback);
+  }
+
+  _scorriLivelliRicorsione (callback, stack = [this.root]) { /*la funzione deve eseguire il primo elemento dello stack ad ogni ricorsione */
+    if (stack.length === 0) {
+      return
+    }
+    if (stack[0].left !== null) {
+      stack.push(stack[0].left);
+    }
+    if (stack[0].right !== null) {
+      stack.push(stack[0].right)
+    }
+    callback(stack[0].data);
+    stack.shift();
+    this._scorriLivelliRicorsione (callback, stack)
+  }
+
+  _scorriLivelliIterattivo (callback, stack = [this.root]) {
+    while (stack.length > 0) {
+      if (stack[0].left !== null) {
+      stack.push(stack[0].left);
+      }
+      if (stack[0].right !== null) {
+      stack.push(stack[0].right)
+      } 
+      callback(stack[0].data);
+      stack.shift();
+    }
+  }
+
+  inOrderForEach(callback) {
+    if (typeof callback !== "function") {
+      throw new Error ("Il parametro non è una funzione");
+    }
+    if (this.root === null) {
+      return
+    }
+    this._inOrder(callback);
+  }
+
+  _inOrder (funzione, nodoCorrente = this.root) {
+    if (nodoCorrente === null) {
+      return;
+    }
+    this._inOrder(funzione, nodoCorrente.left)
+    funzione(nodoCorrente.data);
+    this._inOrder(funzione, nodoCorrente.right)
+  }
+
+  preOrderForEach(callback) {
+    if (typeof callback !== "function") {
+      throw new Error ("Il parametro non è una funzione");
+    }
+    if (this.root === null) {
+      return
+    }
+    this._preOrder(callback);
+  }
+
+  _preOrder (funzione, nodoCorrente = this.root) {
+    if (nodoCorrente === null) {
+      return;
+    }
+    funzione(nodoCorrente.data);
+    this._preOrder(funzione, nodoCorrente.left)
+    this._preOrder(funzione, nodoCorrente.right)
+  }
+
+  postOrderForEach(callback) {
+    if (typeof callback !== "function") {
+      throw new Error ("Il parametro non è una funzione");
+    }
+    if (this.root === null) {
+      return
+    }
+    this._postOrder(callback);
+  }
+
+  _postOrder (funzione, nodoCorrente = this.root) {
+    if (nodoCorrente === null) {
+      return;
+    }
+    this._postOrder(funzione, nodoCorrente.left)
+    this._postOrder(funzione, nodoCorrente.right)
+    funzione(nodoCorrente.data);
+  }
+
+  height(value) {
+    let nodoTarget = this._heightDiscesaRicorsiva (value);
+    return this._contaSottoArchi(nodoTarget);
+  }
+
+  _heightDiscesaRicorsiva (value, nodoCorrente = this.root) {
+    if (nodoCorrente === null) {
+      return undefined
+    } 
+    if (value === nodoCorrente.data) {
+      return nodoCorrente;
+    } else if (value < nodoCorrente.data) {
+      return this._heightDiscesaRicorsiva(value, nodoCorrente.left)
+    } else {
+      return this._heightDiscesaRicorsiva(value, nodoCorrente.right)
+    }
+  }
+
+  _contaSottoArchi (nodoCorrente) {
+    if (nodoCorrente === undefined) {
+      return undefined
+    }
+    if (nodoCorrente === null) {
+      return -1
+    }
+    let maxleft = this._contaSottoArchi(nodoCorrente.left);
+    maxleft += 1;
+    let maxright = this._contaSottoArchi(nodoCorrente.right);
+    maxright += 1;
+    if (maxleft >= maxright) {
+      return maxleft;
+    } else {
+      return maxright;
+    }
+  }
+
+
+
   
 }
 
