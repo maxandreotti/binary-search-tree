@@ -306,6 +306,49 @@ class Tree {
     }
   }
 
+  depth(value, profondita = 0, nodoCorrente = this.root) {
+    if (nodoCorrente === null) {
+      return undefined;
+    } else if (value === nodoCorrente.data) {
+      return profondita;
+    } else if (value < nodoCorrente.data) {
+      profondita++;
+      return this.depth(value, profondita, nodoCorrente.left);
+    } else if (value > nodoCorrente.data) {
+      profondita++;
+      return this.depth(value, profondita, nodoCorrente.right);
+    }
+  }
+  
+  isBalanced() {
+    if (this.root === null) {
+      return true;
+    }
+    const stack = [this.root];
+    while (stack.length > 0) {
+      let a = -1;
+      let b = -1;
+      if (stack[0].left !== null) {
+        stack.push(stack[0].left)
+        a = this._contaSottoArchi(stack[0].left);
+      } 
+      if (stack[0].right !== null) {
+        stack.push(stack[0].right)
+        b = this._contaSottoArchi(stack[0].right);
+      } 
+      if ((Math.abs(a - b)) > 1) {
+        return false
+      }
+      stack.shift();
+    }
+    return true;
+  }
+
+  rebalance() {
+    const nuovoArray = []
+    this.inOrderForEach(valore => nuovoArray.push(valore));
+    this.root = this.buildTree(nuovoArray);
+  }
 
 
   
@@ -323,8 +366,33 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 }
 
 
+const stampaTutto = (albero) => {
+  const livello = [], pre = [], post = [], inOrd = [];
+  albero.levelOrderForEach(v => livello.push(v));
+  albero.preOrderForEach(v => pre.push(v));
+  albero.postOrderForEach(v => post.push(v));
+  albero.inOrderForEach(v => inOrd.push(v));
+  console.log("livello:", livello);
+  console.log("preorder:", pre);
+  console.log("postorder:", post);
+  console.log("inorder:", inOrd);
+};
 
 
-let arrayTest = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
+let arrayTest = [1, 33, 54, 67, 24, 89, 90, 76, 56, 12, 3, 8, 99, 44]
 let test = new Tree(arrayTest);
-prettyPrint(test.root); 
+/*prettyPrint(test.root); */
+console.log(test.isBalanced());
+stampaTutto(test);
+
+test.insert(180);
+test.insert(344);
+test.insert(2222);
+test.insert(132);
+console.log("Ho aggiunto i valori e ora vedo se è bilanciato")
+console.log(test.isBalanced());
+console.log("ora ribilancio e controllo se è bilanciato")
+test.rebalance();
+console.log(test.isBalanced());
+stampaTutto(test);
+
